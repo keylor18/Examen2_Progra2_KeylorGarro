@@ -220,6 +220,7 @@ public class ParqueoFrame extends JFrame {
         txtBitacora.setWrapStyleWord(true);
         txtBitacora.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         txtBitacora.setText("La aplicacion mostrara aqui confirmaciones, advertencias y errores.");
+        txtBitacora.setCaretPosition(txtBitacora.getDocument().getLength());
         panel.add(new JScrollPane(txtBitacora), gbc);
 
         return panel;
@@ -361,7 +362,11 @@ public class ParqueoFrame extends JFrame {
     private void mostrarMensaje(String mensaje, boolean esError) {
         lblEstado.setForeground(esError ? new Color(163, 34, 30) : new Color(22, 113, 62));
         lblEstado.setText(mensaje);
-        txtBitacora.setText(mensaje + System.lineSeparator() + System.lineSeparator() + txtBitacora.getText());
+        if (!txtBitacora.getText().isBlank()) {
+            txtBitacora.append(System.lineSeparator() + System.lineSeparator());
+        }
+        txtBitacora.append(mensaje);
+        txtBitacora.setCaretPosition(txtBitacora.getDocument().getLength());
     }
 
     private String formatearMonto(long monto) {
