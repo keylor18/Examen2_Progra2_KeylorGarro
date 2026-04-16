@@ -4,6 +4,7 @@ import accesodatos.AccesoDatosException;
 import accesodatos.RepositorioParqueo;
 import entidades.RegistroParqueo;
 import entidades.TipoVehiculo;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 
 public class ParqueoServicio {
     private static final Pattern PATRON_PLACA = Pattern.compile("^[A-Z0-9-]{4,10}$");
+    private static final long TARIFA_POR_HORA = 500L;
     private final RepositorioParqueo repositorio;
 
     public ParqueoServicio(RepositorioParqueo repositorio) {
@@ -58,6 +60,44 @@ public class ParqueoServicio {
         } catch (AccesoDatosException ex) {
             throw new ParqueoException("No se pudo registrar el ingreso del vehículo.", ex);
         }
+    }
+
+    public RegistroParqueo registrarSalida(String placa) throws ParqueoException {
+        String placaNormalizada = normalizarPlaca(placa);
+        validarPlaca(placaNormalizada);
+        try {
+            List<RegistroParqueo> activos = new ArrayList<>(repositorio.cargarActivos());
+            RegistroParqueo registroActivo = null;
+            for (RegistroParqueo registro : activos) {
+                if (registro.getPlaca().equalsIgnoreCase(placaNormalizada)) {
+                    registroActivo = registro;
+                    break;
+                }
+            }
+            if (registroActivo == null) {
+                throw new ParqueoException("Debe seleccionar un vehículo activo para registrar la salida.");
+            }
+
+            LocalDateTime horaSalida = LocalDateTime.now();
+            long monto = calcularMonto(registroActivo.getHoraEntrada(), horaSalida);
+            registroActivo.registrarSalida(horaSalida, monto);
+            activos.remove(registroActivo);
+
+            List<RegistroParqueo> historial = new ArrayList<>(repositorio.cargarHistorial());
+            historial.add(registroActivo);
+
+            repositorio.guardarActivos(activos);
+            repositorio.guardarHistorial(historial);
+            return registroActivo;
+        } catch (AccesoDatosException ex) {
+            throw new ParqueoException("No se pudo registrar la salida del vehículo.", ex);
+        }
+    }
+
+    public long calcularMonto(LocalDateTime horaEntrada, LocalDateTime horaSalida) {
+        long minutos = Duration.between(horaEntrada, horaSalida).toMinutes();
+        long horasCobradas = Math.max(1L, (minutos + 59L) / 60L);
+        return horasCobradas * TARIFA_POR_HORA;
     }
 
     private void validarPlaca(String placa) throws ParqueoException {
