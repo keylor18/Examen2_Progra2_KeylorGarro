@@ -26,14 +26,14 @@ public class ParqueoServicio {
             registros.sort(Comparator.comparing(RegistroParqueo::getHoraEntrada).reversed());
             return registros;
         } catch (AccesoDatosException ex) {
-            throw new ParqueoException("No se pudieron cargar los vehículos activos.", ex);
+            throw new ParqueoException("No se pudieron cargar los vehiculos activos.", ex);
         }
     }
 
     public List<RegistroParqueo> obtenerHistorial() throws ParqueoException {
         try {
             List<RegistroParqueo> registros = new ArrayList<>(repositorio.cargarHistorial());
-            registros.sort(Comparator.comparing(RegistroParqueo::getHoraEntrada).reversed());
+            registros.sort(Comparator.comparing(RegistroParqueo::getHoraSalida).reversed());
             return registros;
         } catch (AccesoDatosException ex) {
             throw new ParqueoException("No se pudo cargar el historial.", ex);
@@ -44,7 +44,7 @@ public class ParqueoServicio {
         String placaNormalizada = normalizarPlaca(placa);
         validarPlaca(placaNormalizada);
         if (tipoVehiculo == null) {
-            throw new ParqueoException("Debe seleccionar el tipo de vehículo.");
+            throw new ParqueoException("Debe seleccionar el tipo de vehiculo.");
         }
         try {
             List<RegistroParqueo> activos = new ArrayList<>(repositorio.cargarActivos());
@@ -58,7 +58,7 @@ public class ParqueoServicio {
             repositorio.guardarActivos(activos);
             return nuevoRegistro;
         } catch (AccesoDatosException ex) {
-            throw new ParqueoException("No se pudo registrar el ingreso del vehículo.", ex);
+            throw new ParqueoException("No se pudo registrar el ingreso del vehiculo.", ex);
         }
     }
 
@@ -75,7 +75,7 @@ public class ParqueoServicio {
                 }
             }
             if (registroActivo == null) {
-                throw new ParqueoException("Debe seleccionar un vehículo activo para registrar la salida.");
+                throw new ParqueoException("Debe seleccionar un vehiculo activo para registrar la salida.");
             }
 
             LocalDateTime horaSalida = LocalDateTime.now();
@@ -90,7 +90,27 @@ public class ParqueoServicio {
             repositorio.guardarHistorial(historial);
             return registroActivo;
         } catch (AccesoDatosException ex) {
-            throw new ParqueoException("No se pudo registrar la salida del vehículo.", ex);
+            throw new ParqueoException("No se pudo registrar la salida del vehiculo.", ex);
+        }
+    }
+
+    public void eliminarRegistroHistorial(RegistroParqueo registroEliminar) throws ParqueoException {
+        if (registroEliminar == null) {
+            throw new ParqueoException("Debe seleccionar un registro del historial para eliminarlo.");
+        }
+        try {
+            List<RegistroParqueo> historial = new ArrayList<>(repositorio.cargarHistorial());
+            boolean eliminado = historial.removeIf(registro ->
+                    registro.getPlaca().equalsIgnoreCase(registroEliminar.getPlaca())
+                    && registro.getHoraEntrada().equals(registroEliminar.getHoraEntrada())
+                    && registro.getHoraSalida() != null
+                    && registro.getHoraSalida().equals(registroEliminar.getHoraSalida()));
+            if (!eliminado) {
+                throw new ParqueoException("El registro seleccionado ya no existe en el historial.");
+            }
+            repositorio.guardarHistorial(historial);
+        } catch (AccesoDatosException ex) {
+            throw new ParqueoException("No se pudo eliminar el registro del historial.", ex);
         }
     }
 
@@ -105,11 +125,11 @@ public class ParqueoServicio {
             throw new ParqueoException("La placa es obligatoria.");
         }
         if (!PATRON_PLACA.matcher(placa).matches()) {
-            throw new ParqueoException("La placa debe tener entre 4 y 10 caracteres alfanuméricos o guiones.");
+            throw new ParqueoException("La placa debe tener entre 4 y 10 caracteres alfanumericos o guiones.");
         }
     }
 
     private String normalizarPlaca(String placa) {
-        return placa == null ? "" : placa.trim().toUpperCase();
+        return placa == null ? "" : placa.trim().replaceAll("\\s+", "").toUpperCase();
     }
 }

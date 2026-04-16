@@ -8,14 +8,14 @@ import logica.ParqueoServicio;
 
 public class ParqueoPublicoApp {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> iniciarAplicacion());
+        SwingUtilities.invokeLater(ParqueoPublicoApp::iniciarAplicacion);
     }
 
     private static void iniciarAplicacion() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            // Si el sistema no soporta el look and feel nativo, Swing usa el predeterminado.
+            // Si no se puede aplicar el estilo nativo, Swing usa el predeterminado.
         }
 
         try {
@@ -23,8 +23,7 @@ public class ParqueoPublicoApp {
             ParqueoServicio servicio = new ParqueoServicio(repositorio);
             new ParqueoFrame(servicio).setVisible(true);
         } catch (AccesoDatosException ex) {
-            ErrorFrame errorFrame = new ErrorFrame(ex.getMessage());
-            errorFrame.setVisible(true);
+            new ErrorFrame(ex.getMessage()).setVisible(true);
         }
     }
 }

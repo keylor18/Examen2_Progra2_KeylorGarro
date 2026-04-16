@@ -80,6 +80,9 @@ public class ArchivoRepositorioParqueo implements RepositorioParqueo {
             return registros;
         } catch (IOException ex) {
             throw new AccesoDatosException("No fue posible leer el archivo " + archivo.getFileName() + ".", ex);
+        } catch (RuntimeException ex) {
+            throw new AccesoDatosException("El archivo " + archivo.getFileName()
+                    + " contiene datos invalidos y no pudo procesarse.", ex);
         }
     }
 
@@ -98,11 +101,11 @@ public class ArchivoRepositorioParqueo implements RepositorioParqueo {
     private RegistroParqueo desdeLinea(String linea) throws AccesoDatosException {
         String[] partes = linea.split("\\|", -1);
         if (partes.length != 5) {
-            throw new AccesoDatosException("Se encontró un registro inválido en el archivo de datos.");
+            throw new AccesoDatosException("Se encontro un registro invalido en el archivo de datos.");
         }
         TipoVehiculo tipo = TipoVehiculo.desdeTexto(partes[1]);
         if (tipo == null) {
-            throw new AccesoDatosException("Se encontró un tipo de vehículo inválido en el archivo de datos.");
+            throw new AccesoDatosException("Se encontro un tipo de vehiculo invalido en el archivo de datos.");
         }
         LocalDateTime entrada = LocalDateTime.parse(partes[2], FORMATO_ARCHIVO);
         LocalDateTime salida = partes[3].isBlank() ? null : LocalDateTime.parse(partes[3], FORMATO_ARCHIVO);

@@ -1,6 +1,7 @@
 package presentacion;
 
 import entidades.RegistroParqueo;
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class RegistroTableModel extends AbstractTableModel {
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final NumberFormat FORMATO_MONTO = NumberFormat.getIntegerInstance(Locale.US);
     private static final String[] COLUMNAS_ACTIVOS = {"Placa", "Tipo", "Hora de entrada"};
     private static final String[] COLUMNAS_HISTORIAL = {"Placa", "Tipo", "Hora de entrada", "Hora de salida", "Monto"};
     private final VistaTabla vista;
@@ -62,7 +64,7 @@ public class RegistroTableModel extends AbstractTableModel {
             case 1 -> registro.getTipoVehiculo().getDescripcion();
             case 2 -> FORMATO_FECHA.format(registro.getHoraEntrada());
             case 3 -> registro.getHoraSalida() == null ? "" : FORMATO_FECHA.format(registro.getHoraSalida());
-            case 4 -> String.format(Locale.US, "₡%,d", registro.getMontoCobrado());
+            case 4 -> "₡" + FORMATO_MONTO.format(registro.getMontoCobrado());
             default -> "";
         };
     }

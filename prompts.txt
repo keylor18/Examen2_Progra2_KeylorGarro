@@ -1,0 +1,54 @@
+Registro de prompts utilizados para el desarrollo asistido por IA
+Proyecto: Examen2_Progra2_KeylorGarro
+
+1. Prompt principal
+Texto base:
+"Desarrolla una aplicacion completa en Java para la gestion de un parqueo publico, cumpliendo estrictamente con requisitos de Java, NetBeans, Ant, Swing, arquitectura por capas, persistencia en txt, prompts, changelog, git y tags."
+Parte del sistema generada:
+- Estructura general del proyecto
+- Arquitectura por capas
+- Reglas de negocio
+- Persistencia en archivos
+- Interfaz principal Swing
+Modificaciones manuales realizadas:
+- Ajuste de nombres de clases y paquetes
+- Organizacion final del layout con dos tablas visibles
+- Refinamiento de mensajes en interfaz
+
+2. Prompt derivado interno de arquitectura
+Texto base:
+"Crear una separacion estricta entre presentacion, logica, acceso a datos y entidades, evitando dependencias directas entre interfaz y archivos."
+Parte del sistema generada:
+- `src/entidades`
+- `src/logica`
+- `src/accesodatos`
+Modificaciones manuales realizadas:
+- Se agrego manejo de errores para archivos corruptos
+- Se incorporo sanitizacion de placa y eliminacion de historial desde la capa logica
+
+3. Prompt derivado interno de interfaz
+Texto base:
+"Construir una interfaz Swing sin consola ni JOptionPane, usando JFrame, formularios, JTable, mensajes visibles dentro de la ventana y acciones para ingreso y salida."
+Parte del sistema generada:
+- `ParqueoFrame`
+- `RegistroTableModel`
+- `ErrorFrame`
+Modificaciones manuales realizadas:
+- Se agrego panel de historial con eliminacion opcional
+- Se agrego bitacora de mensajes
+- Se ajusto la interfaz para trabajar con seleccion de filas
+
+4. Prompt derivado interno de documentacion y entregables
+Texto base:
+"Generar README, CHANGELOG, prompts y soporte para versionado por hitos v1.0, v1.1 y v1.2."
+Parte del sistema generada:
+- `README.md`
+- `CHANGELOG.md`
+- `prompts.txt`
+Modificaciones manuales realizadas:
+- Se adapto el contenido a los hitos reales del repositorio local
+- Se agrego nota sobre el bloqueo de autenticacion en GitHub
+
+Resumen final
+- No se utilizaron prompts externos adicionales fuera de la solicitud principal y su descomposicion tecnica interna.
+- El codigo final fue revisado y ajustado manualmente para asegurar coherencia entre interfaz, reglas de negocio y persistencia.

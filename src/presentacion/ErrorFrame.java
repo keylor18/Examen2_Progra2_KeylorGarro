@@ -13,7 +13,7 @@ import javax.swing.border.EmptyBorder;
 
 public class ErrorFrame extends JFrame {
     public ErrorFrame(String mensaje) {
-        setTitle("Error al iniciar la aplicación");
+        setTitle("Error al iniciar la aplicacion");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(520, 260));
         setLocationRelativeTo(null);
